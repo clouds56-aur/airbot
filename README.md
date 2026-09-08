@@ -67,6 +67,7 @@ Install both Python SDK packages in user space. These commands do not use sudo:
 ~~~bash
 ./packages/airbot-sdk-5.1/install.sh
 ./packages/airbot-sdk-5.2/install.sh
+export PATH="$HOME/.local/bin:$PATH"
 arm_joint_state-5.1 --help
 arm-sdk-5.2 version
 ~~~

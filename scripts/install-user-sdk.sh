@@ -134,3 +134,7 @@ done
 printf 'Installed %s in %s\n' "$AIRBOT_PACKAGE_NAME" "$version_root"
 printf 'Activate with: source %s/bin/activate\n' "$version_root"
 printf 'Versioned Python: %s/airbot-python-%s\n' "$bin_root" "$AIRBOT_COMMAND_SUFFIX"
+case :$PATH: in
+  *:$bin_root:*) ;;
+  *) printf 'Add %s to PATH to use the versioned commands directly.\n' "$bin_root" ;;
+esac

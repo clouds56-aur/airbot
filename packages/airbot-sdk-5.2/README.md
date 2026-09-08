@@ -23,6 +23,7 @@ Use it by activating the environment or through the versioned commands:
 
 ~~~bash
 source ~/.local/share/airbot-sdk/5.2.2/bin/activate
+export PATH="$HOME/.local/bin:$PATH"
 airbot-python-5.2 your_program.py
 arm-sdk-5.2 version
 ~~~

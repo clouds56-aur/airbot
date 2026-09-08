@@ -24,6 +24,7 @@ Use it by activating the environment or through the versioned commands:
 
 ~~~bash
 source ~/.local/share/airbot-sdk/5.1.6/bin/activate
+export PATH="$HOME/.local/bin:$PATH"
 airbot-python-5.1 your_program.py
 arm_joint_state-5.1 --help
 ~~~
