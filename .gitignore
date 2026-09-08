@@ -1,0 +1,16 @@
+# Build inputs and outputs
+downloads/
+packages/*/src/
+packages/*/pkg/
+*.deb
+*.whl
+*.zip
+*.tar.gz
+*.tar.xz
+*.pkg.tar.*
+*.log
+
+# Local environments and tools
+.venv*/
+__pycache__/
+.DS_Store

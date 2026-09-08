@@ -1,0 +1,21 @@
+pkgbase = airbot-arm-bin
+	pkgdesc = AIRBOT Play controller service, repackaged from the vendor binary
+	pkgver = 5.2.2
+	pkgrel = 1
+	url = https://docs.airbots.online/airbot-play/changelog.html
+	arch = x86_64
+	license = LicenseRef-Unknown
+	makedepends = binutils
+	depends = glibc>=2.34
+	depends = libcap
+	depends = can-utils
+	depends = iproute2
+	provides = airbot-arm=5.2.2
+	conflicts = airbot-arm
+	noextract = airbot-arm-release-5.2.2.tar.gz
+	options = !strip
+	options = !debug
+	source = airbot-arm-release-5.2.2.tar.gz::https://docs.airbots.online/assets/airbot-play/5.2/airbot_arm_release.tar.gz
+	sha256sums = c8efe1330b0ffe0625cfbfb364bac9d4bfe647e98c18c29fddefbc75a77cefc6
+
+pkgname = airbot-arm-bin

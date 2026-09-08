@@ -1,0 +1,33 @@
+pkgname=airbot-arm-bin
+pkgver=5.2.2
+pkgrel=1
+pkgdesc='AIRBOT Play controller service, repackaged from the vendor binary'
+arch=('x86_64')
+url='https://docs.airbots.online/airbot-play/changelog.html'
+# The inspected controller package contains no license text.
+license=('LicenseRef-Unknown')
+depends=('glibc>=2.34' 'libcap' 'can-utils' 'iproute2')
+makedepends=('binutils')
+provides=("airbot-arm=$pkgver")
+conflicts=('airbot-arm')
+options=('!strip' '!debug')
+source=("airbot-arm-release-${pkgver}.tar.gz::https://docs.airbots.online/assets/airbot-play/5.2/airbot_arm_release.tar.gz")
+noextract=("airbot-arm-release-${pkgver}.tar.gz")
+sha256sums=('c8efe1330b0ffe0625cfbfb364bac9d4bfe647e98c18c29fddefbc75a77cefc6')
+
+prepare() {
+  local vendor_deb="product/x86_64/jammy/airbot-arm_${pkgver}_amd64.deb"
+  bsdtar -xf "$srcdir/airbot-arm-release-${pkgver}.tar.gz" \
+    -C "$srcdir" "$vendor_deb"
+  mkdir -p "$srcdir/root" "$srcdir/control"
+  ar p "$srcdir/$vendor_deb" data.tar.gz > "$srcdir/data.tar.gz"
+  ar p "$srcdir/$vendor_deb" control.tar.gz > "$srcdir/control.tar.gz"
+  bsdtar -xf "$srcdir/data.tar.gz" -C "$srcdir/root"
+  bsdtar -xf "$srcdir/control.tar.gz" -C "$srcdir/control"
+  cd "$srcdir/root"
+  md5sum --quiet -c "$srcdir/control/md5sums"
+}
+
+package() {
+  cp -a "$srcdir/root/usr" "$pkgdir/"
+}
