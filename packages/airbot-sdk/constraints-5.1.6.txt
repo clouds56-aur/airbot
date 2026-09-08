@@ -1,0 +1,8 @@
+# Verified with airbot_py 5.1.6 on Python 3.12.14.
+airbot-py==5.1.6
+grpcio==1.70.0
+grpcio-tools==1.70.0
+protobuf==5.29.6
+setuptools==84.0.0
+typeguard==4.4.0
+typing-extensions==4.16.0

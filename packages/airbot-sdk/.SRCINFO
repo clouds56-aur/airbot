@@ -1,0 +1,22 @@
+pkgbase = airbot-sdk
+	pkgdesc = Versioned AIRBOT Play Python SDK environment manager
+	pkgver = 0.1.0
+	pkgrel = 1
+	url = https://docs.airbots.online/airbot-play/quick-start/overview.html
+	arch = any
+	license = LicenseRef-Unknown
+	depends = bash
+	depends = coreutils
+	depends = curl
+	depends = python
+	depends = tar
+	depends = unzip
+	depends = uv
+	source = airbot-sdk
+	source = constraints-5.1.6.txt
+	source = constraints-5.2.2.txt
+	sha256sums = 79c3c647739758f94bff2180d4ad0eddb71094fc1ca03d6d718732d98b250110
+	sha256sums = c610e8522870c5553b2a769034e7ee05af8a7b73aa124a2da7cf0032506c34e0
+	sha256sums = 2129ceeab202143d6ed28dc418d0d3c8952d0d93d1719185f80df6a3f6e71b08
+
+pkgname = airbot-sdk

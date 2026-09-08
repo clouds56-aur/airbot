@@ -1,0 +1,60 @@
+pkgname=airbot-configure
+pkgver=5.1.6
+pkgrel=1
+pkgdesc='Arch Linux host integration for the legacy AIRBOT Play 5.1.6 runtime'
+arch=('any')
+url='https://docs.airbots.online/airbot-play/quick-start/overview.html'
+license=('LicenseRef-Unknown')
+depends=('systemd' 'udev' 'iproute2' 'can-utils' 'podman-docker')
+source=(
+  "${pkgname}_${pkgver}-1_all.deb::https://docs.airbots.online/assets/airbot-play/5.1.6/airbot-configure_5.1.6-1_all.deb"
+  'airbot-bind-device'
+)
+noextract=("${pkgname}_${pkgver}-1_all.deb")
+sha256sums=(
+  '412658af9abffd4b5157f303b96af64d591c5abd43ae73b3e00b485de4ff7207'
+  '92326eedfdc0fac214a36a70525df3ec5846133499f55cf7adc2a02703e191a1'
+)
+
+prepare() {
+  local deb="$srcdir/${pkgname}_${pkgver}-1_all.deb"
+  local root="$srcdir/vendor-root"
+  rm -rf "$root"
+  mkdir -p "$root"
+  ar p "$deb" data.tar.xz > "$srcdir/data.tar.xz"
+  bsdtar -xJf "$srcdir/data.tar.xz" -C "$root"
+
+  local fsm="$root/usr/local/bin/airbot_fsm"
+  local iap="$root/usr/local/bin/airbot_iap"
+  local can_add="$root/usr/local/bin/can_add.sh"
+  local slcan_add="$root/usr/local/bin/slcan_add.sh"
+
+  sed -i -e '1a set -euo pipefail' -e 's#mkdir -p airbot_logs/${LAUNCH_TIME}#mkdir -p "airbot_logs/${LAUNCH_TIME}"#' -e 's#docker run -it --rm --network=host -v ./airbot_logs/${LAUNCH_TIME}:/userdata $IMAGE#exec docker run -it --rm --network=host -v "$PWD/airbot_logs/${LAUNCH_TIME}:/userdata" "$IMAGE"#' "$fsm"
+  sed -i -e '1a set -euo pipefail' -e 's#docker run -it --rm --network=host -v $(pwd):/root/runtime $IMAGE#exec docker run -it --rm --network=host -v "$PWD:/root/runtime" "$IMAGE"#' "$iap"
+  printf '\n' >> "$fsm"
+  printf '\n' >> "$iap"
+  sed -i -e '1a set -euo pipefail' -e 's/^IFACE=$1$/IFACE=${1:?interface is required}/' -e 's/^BITRATE=1000000.*/BITRATE=1000000/' -e 's#/sbin/ip link set $IFACE#/usr/bin/ip link set "$IFACE"#g' -e 's/bitrate $BITRATE/bitrate "$BITRATE"/' "$can_add"
+  sed -i -e '1a set -eu\n\nCAN_INDEX=' -e 's#/usr/bin/slcand -o -c -f -s8 -S 3000000 /dev/ttyCAN$1 can$CAN_INDEX#/usr/bin/slcand -o -c -f -s8 -S 3000000 "/dev/ttyCAN$1" "can$CAN_INDEX"#' -e 's#/usr/sbin/ip link set up can$CAN_INDEX#/usr/bin/ip link set "can$CAN_INDEX" up#' -e 's#/usr/sbin/ip link set can$CAN_INDEX txqueuelen 1000#/usr/bin/ip link set "can$CAN_INDEX" txqueuelen 1000#' "$slcan_add"
+
+  sed -i 's#/usr/local/bin#/usr/lib/airbot-configure#g' "$root/etc/systemd/system/slcan@.service" "$root/etc/udev/rules.d/90-usb-can.rules"
+  sed -i -e 's/GROUP="dialout"/GROUP="uucp"/' -e 's/MODE="0777"/MODE="0660"/' "$root/etc/udev/rules.d/90-usb-slcan.rules"
+}
+
+package() {
+  local root="$srcdir/vendor-root"
+
+  install -Dm755 "$root/usr/local/bin/airbot_fsm" "$pkgdir/usr/bin/airbot_fsm"
+  install -Dm755 "$root/usr/local/bin/airbot_iap" "$pkgdir/usr/bin/airbot_iap"
+  ln -s airbot_iap "$pkgdir/usr/bin/airbot_fw_upgrade"
+  ln -s airbot_fsm "$pkgdir/usr/bin/airbot_server"
+
+  install -Dm755 "$srcdir/airbot-bind-device" "$pkgdir/usr/bin/bind_airbot_device"
+  ln -s bind_airbot_device "$pkgdir/usr/bin/airbot_bind_device"
+  ln -s bind_airbot_device "$pkgdir/usr/bin/airbot-bind-device"
+
+  install -Dm755 "$root/usr/local/bin/can_add.sh" "$pkgdir/usr/lib/airbot-configure/can_add.sh"
+  install -Dm755 "$root/usr/local/bin/slcan_add.sh" "$pkgdir/usr/lib/airbot-configure/slcan_add.sh"
+  install -Dm644 "$root/etc/udev/rules.d/90-usb-can.rules" "$pkgdir/usr/lib/udev/rules.d/90-usb-can.rules"
+  install -Dm644 "$root/etc/udev/rules.d/90-usb-slcan.rules" "$pkgdir/usr/lib/udev/rules.d/90-usb-slcan.rules"
+  install -Dm644 "$root/etc/systemd/system/slcan@.service" "$pkgdir/usr/lib/systemd/system/slcan@.service"
+}

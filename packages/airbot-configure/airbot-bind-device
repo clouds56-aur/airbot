@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  printf 'Usage: %s <can|slcan> <serial> <interface-name>\n' "${0##*/}" >&2
+  printf '       %s rm [can|slcan]\n' "${0##*/}" >&2
+  exit 2
+}
+
+[[ $EUID -eq 0 ]] || {
+  printf 'Run %s with sudo.\n' "${0##*/}" >&2
+  exit 1
+}
+
+type=${1:-}
+if [[ $type == rm ]]; then
+  case ${2:-all} in
+    can)
+      rm -f /etc/udev/rules.d/91-usb-can-airbot.rules
+      ;;
+    slcan)
+      rm -f /etc/udev/rules.d/91-usb-slcan-airbot.rules
+      ;;
+    all)
+      rm -f /etc/udev/rules.d/91-usb-can-airbot.rules
+      rm -f /etc/udev/rules.d/91-usb-slcan-airbot.rules
+      ;;
+    *)
+      usage
+      ;;
+  esac
+  udevadm control --reload-rules
+  printf 'Removed requested AIRBOT device binding rules.\n'
+  exit 0
+fi
+
+serial=${2:-}
+interface=${3:-}
+[[ $type == can || $type == slcan ]] || usage
+[[ $serial =~ ^[[:alnum:]_.:+-]+$ ]] || {
+  printf 'The USB serial contains unsupported characters.\n' >&2
+  exit 2
+}
+[[ $interface =~ ^[[:alnum:]_.-]{1,15}$ ]] || {
+  printf 'The interface name must contain 1-15 safe characters.\n' >&2
+  exit 2
+}
+
+if [[ $type == slcan ]]; then
+  rules_file=/etc/udev/rules.d/91-usb-slcan-airbot.rules
+  printf 'SUBSYSTEM=="tty", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="0000", ATTRS{serial}=="%s", SYMLINK+="ttyCAN%%n", SYMLINK+="%s", GROUP="uucp", MODE="0660", TAG+="systemd", ENV{SYSTEMD_WANTS}="slcan@%%n.service"\n' "$serial" "$interface" > "$rules_file"
+else
+  rules_file=/etc/udev/rules.d/91-usb-can-airbot.rules
+  printf 'ACTION=="add", SUBSYSTEM=="net", ATTRS{idVendor}=="1d50", ATTRS{idProduct}=="606f", ATTRS{serial}=="%s", NAME="%s", RUN+="/usr/lib/airbot-configure/can_add.sh %s"\n' "$serial" "$interface" "$interface" > "$rules_file"
+fi
+
+chmod 0644 "$rules_file"
+udevadm control --reload-rules
+udevadm trigger
+printf 'Wrote %s. Reconnect the USB adapter.\n' "$rules_file"

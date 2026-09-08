@@ -1,0 +1,14 @@
+# Verified with the vendor's arm_sdk-5.2.2 wheel on Arch Python 3.14.7.
+# Pass with pip install -c; obtain the AIRBOT wheel from the vendor archive.
+annotated-doc==0.0.5
+arm-sdk==5.2.2
+grpcio==1.83.1
+loguru==0.7.3
+markdown-it-py==4.2.0
+mdurl==0.1.2
+protobuf==7.36.1
+Pygments==2.21.0
+rich==15.0.0
+shellingham==1.5.4
+typer==0.27.2
+typing_extensions==4.16.0

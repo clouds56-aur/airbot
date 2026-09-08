@@ -1,0 +1,20 @@
+pkgname=airbot-sdk
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Versioned AIRBOT Play Python SDK environment manager'
+arch=('any')
+url='https://docs.airbots.online/airbot-play/quick-start/overview.html'
+license=('LicenseRef-Unknown')
+depends=('bash' 'coreutils' 'curl' 'python' 'tar' 'unzip' 'uv')
+source=('airbot-sdk' 'constraints-5.1.6.txt' 'constraints-5.2.2.txt')
+sha256sums=(
+  '79c3c647739758f94bff2180d4ad0eddb71094fc1ca03d6d718732d98b250110'
+  'c610e8522870c5553b2a769034e7ee05af8a7b73aa124a2da7cf0032506c34e0'
+  '2129ceeab202143d6ed28dc418d0d3c8952d0d93d1719185f80df6a3f6e71b08'
+)
+
+package() {
+  install -Dm755 "$srcdir/airbot-sdk" "$pkgdir/usr/bin/airbot-sdk"
+  install -Dm644 "$srcdir/constraints-5.1.6.txt" "$pkgdir/usr/share/airbot-sdk/5.1.6/constraints.txt"
+  install -Dm644 "$srcdir/constraints-5.2.2.txt" "$pkgdir/usr/share/airbot-sdk/5.2.2/constraints.txt"
+}

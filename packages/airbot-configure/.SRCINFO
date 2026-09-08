@@ -1,0 +1,19 @@
+pkgbase = airbot-configure
+	pkgdesc = Arch Linux host integration for the legacy AIRBOT Play 5.1.6 runtime
+	pkgver = 5.1.6
+	pkgrel = 1
+	url = https://docs.airbots.online/airbot-play/quick-start/overview.html
+	arch = any
+	license = LicenseRef-Unknown
+	depends = systemd
+	depends = udev
+	depends = iproute2
+	depends = can-utils
+	depends = podman-docker
+	noextract = airbot-configure_5.1.6-1_all.deb
+	source = airbot-configure_5.1.6-1_all.deb::https://docs.airbots.online/assets/airbot-play/5.1.6/airbot-configure_5.1.6-1_all.deb
+	source = airbot-bind-device
+	sha256sums = 412658af9abffd4b5157f303b96af64d591c5abd43ae73b3e00b485de4ff7207
+	sha256sums = 92326eedfdc0fac214a36a70525df3ec5846133499f55cf7adc2a02703e191a1
+
+pkgname = airbot-configure
