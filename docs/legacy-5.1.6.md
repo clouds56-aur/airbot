@@ -61,12 +61,11 @@ arm. can-utils comes from the existing AUR package.
 
 ## Client SDK
 
-Follow the [legacy SDK guide](../sdk/5.1.6/README.md), or install both versions
-through the versioned manager:
+Follow the [legacy SDK package](../packages/airbot-sdk-5.1/README.md). It
+installs the SDK and pinned dependencies in the current user's data directory:
 
 ~~~bash
-airbot-sdk install 5.1.6
-airbot-sdk install 5.2.2
+./packages/airbot-sdk-5.1/install.sh
 ~~~
 
 The archive also contains Ubuntu C++ packages named airbot_cpp; their package

@@ -18,7 +18,8 @@ when changing releases.
 ~~~text
 packages/airbot-arm-bin/    Arch controller recipe and AUR metadata
 packages/airbot-configure/  Legacy 5.1.6 host integration recipe
-packages/airbot-sdk/        Versioned SDK environment manager
+packages/airbot-sdk-5.1/    Legacy user-space SDK package
+packages/airbot-sdk-5.2/    Current user-space SDK package
 sdk/5.2.2/                  Current Python SDK setup and tested constraints
 sdk/5.1.6/                  Legacy Python SDK setup and tested constraints
 docs/                       Compatibility results and legacy configuration notes
@@ -61,21 +62,19 @@ The recipe extracts the verified Debian package and adapts its paths, udev
 permissions, and shell quoting for Arch. It does not execute Debian maintainer
 scripts.
 
-Install both Python SDKs in parallel with the versioned manager:
+Install both Python SDK packages in user space. These commands do not use sudo:
 
 ~~~bash
-cd packages/airbot-sdk
-makepkg
-sudo pacman -U airbot-sdk-0.1.0-1-any.pkg.tar.zst
-airbot-sdk install 5.1.6
-airbot-sdk install 5.2.2
-airbot-sdk run 5.1.6 arm_joint_state --help
-airbot-sdk run 5.2.2 arm-sdk version
+./packages/airbot-sdk-5.1/install.sh
+./packages/airbot-sdk-5.2/install.sh
+arm_joint_state-5.1 --help
+arm-sdk-5.2 version
 ~~~
 
-Each release gets its own Python interpreter and virtual environment. The
-legacy SDK uses Python 3.12 because its gRPC dependency has no Python 3.14
-wheel; the current SDK uses Python 3.14.
+Each package installs a complete pinned environment under the current user's
+data directory. The legacy package uses Python 3.12 because its gRPC dependency
+has no Python 3.14 wheel; the current package uses Python 3.14. The installers
+require uv but do not require a system Python package.
 
 ## Development
 
